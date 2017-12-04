@@ -44,34 +44,10 @@ static void test3In1Out(Circuit* circuit, bool in0, bool in1, bool in2) {
 	printf("%s %s %s -> %s\n", b2s(in0), b2s(in1), b2s(in2), b2s(out0));
 }
 
-int *findIndices(int *numbers, int target);
-
-int *findIndices(int *numbers, int target) {
-	for (int i = 0; i < sizeof(numbers); i++) {
-		for (int j = 0; j < sizeof(numbers); j++) {
-			if (numbers[i] + numbers[j] == target) {
-				int *indices = malloc(2 * sizeof(int));
-				indices[0] = i;
-				indices[1] = j;
-				return indices;
-			}
-		}
-	}
-	return NULL;
-}
-
 int main(int argc, char **argv) {
 	Circuit* c = Circuits_and3();
 	printf("Some input(s) false: should be false\n");
 	test3In1Out(c, true, true, false);
 	printf("All inputs true: should be true\n");
 	test3In1Out(c, true, true, true);
-
-	printf("HI\n");
-	printf("Matt's line\n");
-	printf("Matt's second line\n");
-
-	int numbers[7] = {1, 3, 5, 7, 9, 2, 8};
-
-	printf("Here are indices= %d, %d\n", findIndices(numbers, 8)[0], findIndices(numbers, 8)[1]);
 }
