@@ -52,6 +52,6 @@ int main(int argc, char **argv) {
 	test3In1Out(c, true, true, true);
 
 	//Matt test cases
-	printf("All inpuss false: should be false\n");
+	printf("All inputs false: should be false\n");
 	test3In1Out(c, false, false, false);
 }
