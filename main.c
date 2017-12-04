@@ -86,6 +86,48 @@ static void test1In1Out(Circuit* circuit, bool in0) {
 	printf("%s -> %s\n", b2s(in0), b2s(out0));
 }
 
+//Matt method to create Circuit(a)
+static Circuit* Circuits_ca() {
+	Value* x = new_Value(false);
+	Value* y = new_Value(false);
+	Value* z = new_Value(false);
+	Gate* notY = new_Inverter(y);
+
+	Value** inputs = new_Value_array(3);
+	inputs[0] = x;
+	inputs[1] = y;
+	inputs[2] = z;
+	Value** outputs = new_Value_array(4);
+	outputs[0] = Gate_getOutput(notY); //Storing value of !y
+	Value_print(outputs[0]);
+
+	Gate* xAndNoty = new_AndGate(x, outputs[0]); //AND gate for x AND !y
+	outputs[1] = Gate_getOutput(xAndNoty); //Storing value for x AND !y
+
+	Gate* yAndz = new_AndGate(y, z); //AND gate of y AND z
+	outputs[2] = Gate_getOutput(yAndz); //Storing value for y AND z
+
+	Gate* finalOr = new_OrGate(outputs[1], outputs[2]); //OR gate for (x!y + yz)
+	outputs[3] = Gate_getOutput(finalOr);
+
+	Gate** gates = new_Gate_array(4);
+	gates[0] = notY;
+	gates[1] = xAndNoty;
+	gates[2] = yAndz;
+	gates[3] = finalOr;
+	return new_Circuit(3, inputs, 1, outputs, 2, gates);
+}
+
+static void testCircuita(Circuit* circuit, bool x, bool y, bool z) {
+	Circuit_setInput(circuit, 0, x);
+	Circuit_setInput(circuit, 1, y);
+	Circuit_setInput(circuit, 2, z);
+	//Circuit_dump(circuit);
+	Circuit_update(circuit);
+	bool out3 = Circuit_getOutput(circuit, 3);
+	printf("%s %s %s -> %s\n", b2s(x), b2s(y), b2s(z), b2s(out3));
+}
+
 int main(int argc, char **argv) {
 	Circuit* c = Circuits_and3();
 	printf("Some input(s) false: should be false\n");
@@ -108,5 +150,9 @@ int main(int argc, char **argv) {
 	printf("Inverting true: shoule be false\n");
 	Circuit* cNOT0 = Circuit_not1();
 	test1In1Out(cNOT0, true);
+
+	printf("Circuit(a) all inputs true: should be true\n");
+	Circuit* cA = Circuits_ca();
+	testCircuita(cA, true, true, true);
 	//End Matt test cases
 }
