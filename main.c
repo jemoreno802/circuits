@@ -30,6 +30,26 @@ static Circuit* Circuits_and3() {
 	return new_Circuit(3, inputs, 1, outputs, 2, gates);
 }
 
+//Matt method to test two OR gates connnected to make a 3-input OR circuit
+static Circuit* Circuits_or3() {
+	Value* in0 = new_Value(false);
+	Value* in1 = new_Value(false);
+	Value* in2 = new_Value(false);
+	Gate* or0 = new_OrGate(in0, in1);
+	Gate* or1 = new_OrGate(Gate_getOutput(or0), in2);
+
+	Value** inputs = new_Value_array(3);
+	inputs[0] = in0;
+	inputs[1] = in1;
+	inputs[2] = in2;
+	Value** outputs = new_Value_array(1);
+	outputs[0] = Gate_getOutput(or1);
+	Gate** gates = new_Gate_array(2);
+	gates[0] = or0;
+	gates[1] = or1;
+	return new_Circuit(3, inputs, 1, outputs, 2, gates);
+}
+
 static char* b2s(bool b) {
 	return b ? "T" : "F";
 }
@@ -54,4 +74,10 @@ int main(int argc, char **argv) {
 	//Matt test cases
 	printf("All inputs false: should be false\n");
 	test3In1Out(c, false, false, false);
+	printf("One input true: should be true\n");
+	Circuit* cO = Circuits_or3();
+	test3In1Out(cO, true, false, false);
+	printf("All input false: should be false\n");
+	Circuit* c1 = Circuits_or3();
+	test3In1Out(c1, false, false, false);
 }
