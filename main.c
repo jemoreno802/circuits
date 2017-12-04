@@ -50,6 +50,20 @@ static Circuit* Circuits_or3() {
 	return new_Circuit(3, inputs, 1, outputs, 2, gates);
 }
 
+//Matt method to test INVERTER to make a 1 input NOT circuit
+static Circuit* Circuit_not1() {
+	Value* in0 = new_Value(false);
+	Gate* not0 = new_Inverter(in0);
+
+	Value** inputs = new_Value_array(1);
+	inputs[0] = in0;
+	Value** outputs = new_Value_array(1);
+	outputs[0] = Gate_getOutput(not0);
+	Gate** gate = new_Gate_array(1);
+	gate[0] = not0;
+	return new_Circuit(1, inputs, 1, outputs, 1, gate);
+}
+
 static char* b2s(bool b) {
 	return b ? "T" : "F";
 }
@@ -64,6 +78,14 @@ static void test3In1Out(Circuit* circuit, bool in0, bool in1, bool in2) {
 	printf("%s %s %s -> %s\n", b2s(in0), b2s(in1), b2s(in2), b2s(out0));
 }
 
+//Matt method to test NOT gate
+static void test1In1Out(Circuit* circuit, bool in0) {
+	Circuit_setInput(circuit, 0, in0);
+	Circuit_update(circuit);
+	bool out0 = Circuit_getOutput(circuit, 0);
+	printf("%s -> %s\n", b2s(in0), b2s(out0));
+}
+
 int main(int argc, char **argv) {
 	Circuit* c = Circuits_and3();
 	printf("Some input(s) false: should be false\n");
@@ -74,10 +96,17 @@ int main(int argc, char **argv) {
 	//Matt test cases
 	printf("All inputs false: should be false\n");
 	test3In1Out(c, false, false, false);
+
 	printf("One input true: should be true\n");
 	Circuit* cO = Circuits_or3();
 	test3In1Out(cO, true, false, false);
+
 	printf("All input false: should be false\n");
 	Circuit* c1 = Circuits_or3();
 	test3In1Out(c1, false, false, false);
+
+	printf("Inverting true: shoule be false\n");
+	Circuit* cNOT0 = Circuit_not1();
+	test1In1Out(cNOT0, true);
+	//End Matt test cases
 }
