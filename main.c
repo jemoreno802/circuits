@@ -25,5 +25,5 @@ int main(int argc, char *argv[]) {
 
 	int numbers[7] = {1, 3, 5, 7, 9, 2, 8};
 
-	printf("Indices= %d, %d\n", findIndices(numbers, 8)[0], findIndices(numbers, 8)[1]);
+	printf("Here are indices= %d, %d\n", findIndices(numbers, 8)[0], findIndices(numbers, 8)[1]);
 }
