@@ -162,7 +162,7 @@ static Circuit* Circuits_cb(){
 	inputs[0] = x;
 	inputs[1] = y;
 	inputs[2] = z;
-	Value** outputs = new_Value_array(1); 
+	Value** outputs = new_Value_array(1);
 	outputs[0] = Gate_getOutput(D);
 	Gate** gates = new_Gate_array(7);
 	gates[0] = A;
@@ -238,17 +238,16 @@ static void testCircuitc(Circuit* circuitC, bool x, bool y){
 }
 
 int main(int argc, char **argv) {
-
 	// Matts test cases
 	printf("Testing circuit A\n");
 	Circuit* cA = Circuits_ca();
 	testAnyCircuit(cA, 3);
-	
+
 	//Jackie's test cases
 	printf("Testing circuit B\n");
 	Circuit* cB = Circuits_cb();
 	testAnyCircuit(cB, 3);
-	
+
 	//Tom's test cases
 	printf("Testing circuit C\n");
 	Circuit* cC = Circuits_cc();
