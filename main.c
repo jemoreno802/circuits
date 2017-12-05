@@ -119,6 +119,45 @@ static void testCircuita(Circuit* circuitA, bool x, bool y, bool z) {
 	printf("((!%s)%s)+((%s)%s) -> %s\n", b2s(y), b2s(x), b2s(y), b2s(z), b2s(out0));
 }
 
+static Circuit* Circuits_cb(){
+	Value* x = new_Value(false);
+	Value* y = new_Value(false);
+	Value* z = new_Value(false);
+	Gate* A = new_Inverter(y);
+	Gate* preB = new_AndGate(Gate_getOutput(A),x); //the AND of x and NOTy
+	Gate* B = new_Inverter(Gate_getOutput(preB)); //inversion of preB
+	Gate* preC = new_AndGate(y,z);					//the AND of y and z
+	Gate* C = new_Inverter(Gate_getOutput(preC)); //inversion of preC
+	Gate* preD = new_OrGate(Gate_getOutput(B),Gate_getOutput(C)); //or of C and B
+	Gate* D = new_Inverter(Gate_getOutput(preD));
+
+	Value** inputs = new_Value_array(3);
+	inputs[0] = x;
+	inputs[1] = y;
+	inputs[2] = z;
+	Value** outputs = new_Value_array(1); 
+	outputs[0] = Gate_getOutput(D);
+	Gate** gates = new_Gate_array(7);
+	gates[0] = A;
+	gates[1] = preB;
+	gates[2] = B;
+	gates[3] = preC;
+	gates[4] = C;
+	gates[5] = preD;
+	gates[6] = D;
+	return new_Circuit(3,inputs,1,outputs,7,gates);
+}
+
+static void testCircuitB(Circuit* circuitB, bool x, bool y, bool z){
+	Circuit_setInput(circuitB,0,x);
+	Circuit_setInput(circuitB,1,y);
+	Circuit_setInput(circuitB,2,z);
+	Circuit_update(circuitB);
+	bool out0 = Circuit_getOutput(circuitB,0);
+	printf("!((!%s)%s)+!((%s)%s) -> %s\n", b2s(y), b2s(x), b2s(y), b2s(z), b2s(out0));
+
+}
+
 int main(int argc, char **argv) {
 	Circuit* c = Circuits_and3();
 	printf("Some input(s) false: should be false\n");
@@ -146,4 +185,9 @@ int main(int argc, char **argv) {
 	Circuit* cA = Circuits_ca();
 	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
 	//End Matt test cases
+
+	printf("Circuit(b) any combination of inputs: should be false\n");
+	Circuit* cB = Circuits_cb();
+	testCircuitB(cB, true,true,true);
+	Circuit_dump(cB);
 }
