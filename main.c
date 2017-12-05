@@ -1,6 +1,7 @@
 /*
  * File: main.c
- * Creator: George Ferguson
+ * Source code: George Ferguson
+ * Adapted by Matthew Boddewyn, Jacquelyn Moreno, and Thomas Kaizer
  * Created: Mon Nov 28 14:11:17 2016
  * Time-stamp: <Mon Nov 28 14:22:27 EST 2016 ferguson>
  */
@@ -237,41 +238,19 @@ static void testCircuitc(Circuit* circuitC, bool x, bool y){
 }
 
 int main(int argc, char **argv) {
-	Circuit* c = Circuits_and3();
-	printf("Some input(s) false: should be false\n");
-	test3In1Out(c, true, true, false);
-	printf("All inputs true: should be true\n");
-	test3In1Out(c, true, true, true);
 
-	printf("All inputs false: should be false\n");
-	test3In1Out(c, false, false, false);
-
-	printf("One input true: should be true\n");
-	Circuit* cO = Circuits_or3();
-	test3In1Out(cO, true, false, false);
-
-	printf("All input false: should be false\n");
-	Circuit* c1 = Circuits_or3();
-	test3In1Out(c1, false, false, false);
-
-	printf("Inverting true: shoule be false\n");
-	Circuit* cNOT0 = Circuit_not1();
-	test1In1Out(cNOT0, true);
-
-	printf("Circuit(a) inputs true: should be true\n");
+	// Matts test cases
+	printf("Testing circuit A\n");
 	Circuit* cA = Circuits_ca();
-	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
-	//End Matt test cases
-
-	printf("Circuit(b) any combination of inputs: should be false\n");
-	Circuit* cB = Circuits_cb();
-	testCircuitB(cB, true,true,true);
-	Circuit_dump(cB);
-	//testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
 	testAnyCircuit(cA, 3);
-
-	printf("Circuit(c) inputs equivalent: should be true\n");
+	
+	//Jackie's test cases
+	printf("Testing circuit B\n");
+	Circuit* cB = Circuits_cb();
+	testAnyCircuit(cB, 3);
+	
+	//Tom's test cases
+	printf("Testing circuit C\n");
 	Circuit* cC = Circuits_cc();
-	//testCircuitc(cC,true,true);
 	testAnyCircuit(cC, 2);
 }
