@@ -110,7 +110,7 @@ static Circuit* Circuits_ca() {
 	return new_Circuit(3, inputs, 1, outputs, 4, gates);
 }
 
-//Tom method to test equivalence of two variables going through an AND gate and the 
+//Tom method to test equivalence of two variables going through an AND gate and the
 //same variable's negations going through an and gate
 static Circuit* Circuits_cc(){
 
@@ -161,7 +161,6 @@ int main(int argc, char **argv) {
 	printf("All inputs true: should be true\n");
 	test3In1Out(c, true, true, true);
 
-	//Matt test cases
 	printf("All inputs false: should be false\n");
 	test3In1Out(c, false, false, false);
 
@@ -180,8 +179,6 @@ int main(int argc, char **argv) {
 	printf("Circuit(a) inputs true: should be true\n");
 	Circuit* cA = Circuits_ca();
 	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
-	Circuit_dump(cA);
-	//End Matt test cases
 
 	printf("Circuit(c) inputs equivalent: should be true\n");
 	Circuit* cC = Circuits_cc();
