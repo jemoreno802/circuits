@@ -32,5 +32,6 @@ void Value_setValue(Value* this, bool b) {
 }
 
 void Value_print(Value* this) {
-	printf("0x%lx=%s", this, this->value ? "true" : "false");
+	printf("%s ", this->value ? "true" : "false");
+	//printf("0x%lx=%s", this, this->value ? "true" : "false");
 }
