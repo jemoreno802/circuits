@@ -110,9 +110,35 @@ static Circuit* Circuits_ca() {
 	return new_Circuit(3, inputs, 1, outputs, 4, gates);
 }
 
+//Tom method to test equivalence of two variables going through an AND gate and the
+//same variable's negations going through an and gate
+static Circuit* Circuits_cc(){
+
+	Value* x = new_Value(false);
+	Value* y = new_Value(false);
+	Gate* notx = new_Inverter(x);
+	Gate* noty = new_Inverter(y);
+	Gate* xAndy = new_AndGate(x,y);
+	Gate* notXandNotY = new_AndGate(Gate_getOutput(notx), Gate_getOutput(noty));
+	Gate* finalOR = new_OrGate(Gate_getOutput(xAndy), Gate_getOutput(notXandNotY));
+
+	Value** inputs = new_Value_array(2);//only 2 inputs
+	inputs[0] = x;
+	inputs[1] = y;
+	Value** outputs = new_Value_array(1);
+	outputs[0] = Gate_getOutput(finalOR);
+	Gate** gates = new_Gate_array(5);//setting the gates
+	gates[0] = notx;
+	gates[1] = noty;
+	gates[2] = xAndy;
+	gates[3] = notXandNotY;
+	gates[4] = finalOR;
+	return new_Circuit(2, inputs, 1, outputs, 5, gates);
+}
+
 static void testCircuita(Circuit* circuitA, bool x, bool y, bool z) {
-	Circuit_setInput(circuitA, 0, y);
-	Circuit_setInput(circuitA, 1, x);
+	Circuit_setInput(circuitA, 0, x);
+	Circuit_setInput(circuitA, 1, y);
 	Circuit_setInput(circuitA, 2, z);
 	Circuit_update(circuitA);
 	bool out0 = Circuit_getOutput(circuitA, 0);
@@ -155,7 +181,59 @@ static void testCircuitB(Circuit* circuitB, bool x, bool y, bool z){
 	Circuit_update(circuitB);
 	bool out0 = Circuit_getOutput(circuitB,0);
 	printf("!((!%s)%s)+!((%s)%s) -> %s\n", b2s(y), b2s(x), b2s(y), b2s(z), b2s(out0));
+}
+//Method to test any circuit with all possible inputs
+static void testAnyCircuit(Circuit* genCircuit, int inputNum) {
+	bool x = false;
+	bool y = false;
+	bool z = false;
+	for (int i = 0; i < 2; i++) {
+		if (i%2 == 0) {
+			Circuit_setInput(genCircuit, 0, true);
+			x = true;
+		} else {
+			Circuit_setInput(genCircuit, 0, false);
+			x = false;
+		}
+		if (inputNum >= 2) {
+			for (int j = 0; j < 2; j++) {
+				if (j%2 == 0) {
+					Circuit_setInput(genCircuit, 1, true);
+					y = true;
+				} else {
+					Circuit_setInput(genCircuit, 1, false);
+					y = false;
+				}
+				if (inputNum >= 3) {
+					for (int k = 0; k < 2; k++) {
+						if (k%2 == 0) {
+							Circuit_setInput(genCircuit, 2, true);
+							z = true;
+						} else {
+							Circuit_setInput(genCircuit, 2, false);
+							z = false;
+						}
+						Circuit_update(genCircuit);
+						bool out0 = Circuit_getOutput(genCircuit, 0);
+						printf("x=%s y=%s z=%s -> %s\n", b2s(x), b2s(y), b2s(z), b2s(out0));
+					}
+				}
+				if (inputNum == 2) {
+					Circuit_update(genCircuit);
+					bool out0 = Circuit_getOutput(genCircuit, 0);
+					printf("x=%s y=%s -> %s\n", b2s(x), b2s(y), b2s(out0));
+				}
+			}
+		}
+	}
+}
 
+static void testCircuitc(Circuit* circuitC, bool x, bool y){
+	Circuit_setInput(circuitC, 0, x);
+	Circuit_setInput(circuitC, 1, y);
+	Circuit_update(circuitC);
+	bool out0 = Circuit_getOutput(circuitC, 0);
+	printf("(%s)(%s)+(!%s)(!%s) -> %s\n", b2s(x), b2s(y), b2s(x), b2s(y), b2s(out0));
 }
 
 int main(int argc, char **argv) {
@@ -165,7 +243,6 @@ int main(int argc, char **argv) {
 	printf("All inputs true: should be true\n");
 	test3In1Out(c, true, true, true);
 
-	//Matt test cases
 	printf("All inputs false: should be false\n");
 	test3In1Out(c, false, false, false);
 
@@ -190,4 +267,11 @@ int main(int argc, char **argv) {
 	Circuit* cB = Circuits_cb();
 	testCircuitB(cB, true,true,true);
 	Circuit_dump(cB);
+	//testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
+	testAnyCircuit(cA, 3);
+
+	printf("Circuit(c) inputs equivalent: should be true\n");
+	Circuit* cC = Circuits_cc();
+	//testCircuitc(cC,true,true);
+	testAnyCircuit(cC, 2);
 }
