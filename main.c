@@ -111,8 +111,8 @@ static Circuit* Circuits_ca() {
 }
 
 static void testCircuita(Circuit* circuitA, bool x, bool y, bool z) {
-	Circuit_setInput(circuitA, 0, y);
-	Circuit_setInput(circuitA, 1, x);
+	Circuit_setInput(circuitA, 0, x);
+	Circuit_setInput(circuitA, 1, y);
 	Circuit_setInput(circuitA, 2, z);
 	Circuit_update(circuitA);
 	bool out0 = Circuit_getOutput(circuitA, 0);
@@ -145,5 +145,6 @@ int main(int argc, char **argv) {
 	printf("Circuit(a) inputs true: should be true\n");
 	Circuit* cA = Circuits_ca();
 	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
+	Circuit_dump(cA);
 	//End Matt test cases
 }
