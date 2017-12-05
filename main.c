@@ -66,23 +66,23 @@ static void test3In1Out(Circuit* circuit, bool in0, bool in1, bool in2) {
 
 //Matt method to test INVERTER to make a 1 input NOT circuit
 static Circuit* Circuit_not1() {
-	Value* in0 = new_Value(false);
-	Gate* not0 = new_Inverter(in0);
+	Value* in0 = new_Value(false); //Value to be INVERTED
+	Gate* not0 = new_Inverter(in0); //Inverting in0
 
-	Value** inputs = new_Value_array(1);
-	inputs[0] = in0;
-	Value** outputs = new_Value_array(1);
-	outputs[0] = Gate_getOutput(not0);
-	Gate** gate = new_Gate_array(1);
-	gate[0] = not0;
+	Value** inputs = new_Value_array(1); //Only one input for this circuit
+	inputs[0] = in0; //Setting input
+	Value** outputs = new_Value_array(1); //Only one output for this circuit
+	outputs[0] = Gate_getOutput(not0); //Setting output
+	Gate** gate = new_Gate_array(1); //Only one gate used in this circuit
+	gate[0] = not0; //Setting gate used
 	return new_Circuit(1, inputs, 1, outputs, 1, gate);
 }
 
 //Matt method to test NOT gate
 static void test1In1Out(Circuit* notCircuit, bool in0) {
-	Circuit_setInput(notCircuit, 0, in0);
-	Circuit_update(notCircuit);
-	bool out0 = Circuit_getOutput(notCircuit, 0);
+	Circuit_setInput(notCircuit, 0, in0); //Setting the input specified by user
+	Circuit_update(notCircuit); //Updating circuit
+	bool out0 = Circuit_getOutput(notCircuit, 0); //Setting the result from !in0
 	printf("%s -> %s\n", b2s(in0), b2s(out0));
 }
 
@@ -91,18 +91,18 @@ static Circuit* Circuits_ca() {
 	Value* x = new_Value(false);
 	Value* y = new_Value(false);
 	Value* z = new_Value(false);
-	Gate* noty = new_Inverter(y);
-	Gate* xAndNoty = new_AndGate(Gate_getOutput(noty), x);
-	Gate* yAndz = new_AndGate(y, z);
-	Gate* finalOR = new_OrGate(Gate_getOutput(xAndNoty), Gate_getOutput(yAndz));
+	Gate* noty = new_Inverter(y); //First !y gate
+	Gate* xAndNoty = new_AndGate(Gate_getOutput(noty), x); //Second x(!y) gate
+	Gate* yAndz = new_AndGate(y, z); //Third yz gate
+	Gate* finalOR = new_OrGate(Gate_getOutput(xAndNoty), Gate_getOutput(yAndz)); //Fourth (x!(y))+(yz) gate
 
-	Value** inputs = new_Value_array(3);
+	Value** inputs = new_Value_array(3); //Only three inputs for this circuit
 	inputs[0] = x;
 	inputs[1] = y;
 	inputs[2] = z;
-	Value** outputs = new_Value_array(1);
-	outputs[0] = Gate_getOutput(finalOR);
-	Gate** gates = new_Gate_array(4);
+	Value** outputs = new_Value_array(1); //Only one output for this circuit
+	outputs[0] = Gate_getOutput(finalOR); //Setting final output
+	Gate** gates = new_Gate_array(4); //Setting all 4 gates used
 	gates[0] = noty;
 	gates[1] = xAndNoty;
 	gates[2] = yAndz;
@@ -144,6 +144,6 @@ int main(int argc, char **argv) {
 
 	printf("Circuit(a) inputs true: should be true\n");
 	Circuit* cA = Circuits_ca();
-	testCircuita(cA, false, true, true);
+	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
 	//End Matt test cases
 }
