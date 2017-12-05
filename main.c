@@ -145,8 +145,53 @@ static void testCircuita(Circuit* circuitA, bool x, bool y, bool z) {
 	printf("((!%s)%s)+((%s)%s) -> %s\n", b2s(y), b2s(x), b2s(y), b2s(z), b2s(out0));
 }
 
-static void testCircuitc(Circuit* circuitC, bool x, bool y){
+//Method to test any circuit with all possible inputs
+static void testAnyCircuit(Circuit* genCircuit, int inputNum) {
+	bool x = false;
+	bool y = false;
+	bool z = false;
+	for (int i = 0; i < 2; i++) {
+		if (i%2 == 0) {
+			Circuit_setInput(genCircuit, 0, true);
+			x = true;
+		} else {
+			Circuit_setInput(genCircuit, 0, false);
+			x = false;
+		}
+		if (inputNum >= 2) {
+			for (int j = 0; j < 2; j++) {
+				if (j%2 == 0) {
+					Circuit_setInput(genCircuit, 1, true);
+					y = true;
+				} else {
+					Circuit_setInput(genCircuit, 1, false);
+					y = false;
+				}
+				if (inputNum >= 3) {
+					for (int k = 0; k < 2; k++) {
+						if (k%2 == 0) {
+							Circuit_setInput(genCircuit, 2, true);
+							z = true;
+						} else {
+							Circuit_setInput(genCircuit, 2, false);
+							z = false;
+						}
+						Circuit_update(genCircuit);
+						bool out0 = Circuit_getOutput(genCircuit, 0);
+						printf("x=%s y=%s z=%s -> %s\n", b2s(x), b2s(y), b2s(z), b2s(out0));
+					}
+				}
+				if (inputNum == 2) {
+					Circuit_update(genCircuit);
+					bool out0 = Circuit_getOutput(genCircuit, 0);
+					printf("x=%s y=%s -> %s\n", b2s(x), b2s(y), b2s(out0));
+				}
+			}
+		}
+	}
+}
 
+static void testCircuitc(Circuit* circuitC, bool x, bool y){
 	Circuit_setInput(circuitC, 0, x);
 	Circuit_setInput(circuitC, 1, y);
 	Circuit_update(circuitC);
@@ -178,9 +223,11 @@ int main(int argc, char **argv) {
 
 	printf("Circuit(a) inputs true: should be true\n");
 	Circuit* cA = Circuits_ca();
-	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
+	//testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
+	testAnyCircuit(cA, 3);
 
 	printf("Circuit(c) inputs equivalent: should be true\n");
 	Circuit* cC = Circuits_cc();
-	testCircuitc(cC,true,true);
+	//testCircuitc(cC,true,true);
+	testAnyCircuit(cC, 2);
 }
