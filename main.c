@@ -110,6 +110,32 @@ static Circuit* Circuits_ca() {
 	return new_Circuit(3, inputs, 1, outputs, 4, gates);
 }
 
+//Tom method to test equivalence of two variables going through an AND gate and the 
+//same variable's negations going through an and gate
+static Circuit* Circuits_cc(){
+
+	Value* x = new_Value(false);
+	Value* y = new_Value(false);
+	Gate* notx = new_Inverter(x);
+	Gate* noty = new_Inverter(y);
+	Gate* xAndy = new_AndGate(x,y);
+	Gate* notXandNotY = new_AndGate(Gate_getOutput(notx), Gate_getOutput(noty));
+	Gate* finalOR = new_OrGate(Gate_getOutput(xAndy), Gate_getOutput(notXandNotY));
+
+	Value** inputs = new_Value_array(2);//only 2 inputs
+	inputs[0] = x;
+	inputs[1] = y;
+	Value** outputs = new_Value_array(1);
+	outputs[0] = Gate_getOutput(finalOR);
+	Gate** gates = new_Gate_array(5);//setting the gates
+	gates[0] = notx;
+	gates[1] = noty;
+	gates[2] = xAndy;
+	gates[3] = notXandNotY;
+	gates[4] = finalOR;
+	return new_Circuit(2, inputs, 1, outputs, 5, gates);
+}
+
 static void testCircuita(Circuit* circuitA, bool x, bool y, bool z) {
 	Circuit_setInput(circuitA, 0, x);
 	Circuit_setInput(circuitA, 1, y);
@@ -117,6 +143,15 @@ static void testCircuita(Circuit* circuitA, bool x, bool y, bool z) {
 	Circuit_update(circuitA);
 	bool out0 = Circuit_getOutput(circuitA, 0);
 	printf("((!%s)%s)+((%s)%s) -> %s\n", b2s(y), b2s(x), b2s(y), b2s(z), b2s(out0));
+}
+
+static void testCircuitc(Circuit* circuitC, bool x, bool y){
+
+	Circuit_setInput(circuitC, 0, x);
+	Circuit_setInput(circuitC, 1, y);
+	Circuit_update(circuitC);
+	bool out0 = Circuit_getOutput(circuitC, 0);
+	printf("(%s)(%s)+(!%s)(!%s) -> %s\n", b2s(x), b2s(y), b2s(x), b2s(y), b2s(out0));
 }
 
 int main(int argc, char **argv) {
@@ -147,4 +182,8 @@ int main(int argc, char **argv) {
 	testCircuita(cA, false, true, true); //Passing in inputs to test in circuit(a)
 	Circuit_dump(cA);
 	//End Matt test cases
+
+	printf("Circuit(c) inputs equivalent: should be true\n");
+	Circuit* cC = Circuits_cc();
+	testCircuitc(cC,true,true);
 }
